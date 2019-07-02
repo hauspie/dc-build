@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+
+# encoding: utf8
+
+import yaml
+import subprocess
+
+with open("docker-compose.yml") as stream:
+    try:
+        compose = yaml.safe_load(stream)
+        for service in compose['services']:
+            srv_decl = compose['services'][service]
+            if 'build' in srv_decl and 'image' in srv_decl:
+                print("Will build {} from {}".format(srv_decl['image'], srv_decl['build']))
+                subprocess.run(["docker", "build", "-t", srv_decl['image'], srv_decl['build']])
+    except yaml.YAMLError as exc:
+        print(exc)
